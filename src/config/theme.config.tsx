@@ -7,7 +7,7 @@ type ThemeProp ={
 
 
 export enum themePalette{
-    BG = "#FF3C1E",
+    BG = "#5EDFF1",
     P2 = "#F7D00C",
 
 }

@@ -11,19 +11,17 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-
+import Swal from "sweetalert2";
 
 type RegisterType = {
-  id_venta: number;
-  contenido: string;
-  precio: number;
+  userName: string;
+  password: string;
 };
 
 export const App: React.FC<{}> = () => {
   const [registerData, setRegisterData] = React.useState<RegisterType>({
-    id_venta: 0,
-    contenido: "",
-    precio : 0
+    userName: "",
+    password: "",
   });
 
   const dataRegister = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,25 +33,21 @@ export const App: React.FC<{}> = () => {
 
     try {
       const {
-        id_venta,
-        contenido,
-        precio
+        userName,
+        password
       } = registerData;
-      console.log(id_venta);
-      
-      const response = await axios.post("https://hexagonal-1.onrender.com/ventas", {
-        id_venta,
-        contenido,
-        precio
+
+      const response = await axios.post("https://api-1-c2.onrender.com/user", {
+        userName,
+        password
       });
 
       if (response) {
         console.log("Registro exitoso");
 
         setRegisterData({
-          id_venta: 0,
-          contenido: " ",
-          precio: 0,
+          userName: "",
+          password: ""
         });
       } else {
         console.error("Error al registrar");
@@ -64,20 +58,28 @@ export const App: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    const socket = io("https://websocketserver-utr2.onrender.com");
-    socket.on("newClient", (message) => { 
-      alert("Ciclo concluido" + message);
+    const socket = io("https://socketserver-c2.onrender.com");
+
+    socket.on("newUser", (message) => { 
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: message,
+        showConfirmButton: true,
+        timer: 1500
+      });
     });
-  
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
-  
-  
 
   return (
     <Container
       sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="sm">
         <Grid
           container
           direction="column"
@@ -93,51 +95,37 @@ export const App: React.FC<{}> = () => {
                   justifyContent="center"
                   sx={{ mt: 1, mb: 1 }}
                 >
-                  $ Ventas $
+                  Registrar Cliente
                 </Typography>
               </Stack>
 
               <Box component="form" onSubmit={handleSubmit}>
                 <TextField
-                  name="id_venta"
+                  name="userName"
                   margin="normal"
                   fullWidth
-                  label="Ingresa el id de la venta"
+                  label="Nombre"
                   sx={{ mt: 2, mb: 1.5 }}
                   required
-                  type="number"
                   onChange={dataRegister}
-                  value={registerData.id_venta}
+                  value={registerData.userName}
                 />
             
                 <TextField
-                  name="contenido"
+                  name="password"
                   margin="normal"
                   fullWidth
-                  label="Ingresa el contenido de la venta"
+                  label="Password"
                   sx={{ mt: 2, mb: 1.5 }}
                   required
                   onChange={dataRegister}
-                  value={registerData.contenido}
+                  value={registerData.password}
                 />
-
-<TextField
-                  name="precio"
-                  margin="normal"
-                  fullWidth
-                  label="Ingresa el precio"
-                  sx={{ mt: 2, mb: 1.5 }}
-                  required
-                  type="number"
-                  onChange={dataRegister}
-                  value={registerData.precio}
-                />
-                <Stack spacing={2} direction="row" justifyContent="center">
+                <Stack spacing={2} direction="row" justifyContent="end">
                   <Button
                     variant="contained"
                     type="submit"
-                    fullWidth
-                    sx={{ mt: 3, mb: 3 }}
+                    sx={{ mt: 2, mb: 3 }}
                   >
                     Registrar
                   </Button>
