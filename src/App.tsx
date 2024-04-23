@@ -40,7 +40,7 @@ export const App: React.FC<{}> = () => {
         precio
       } = registerData;
 
-      const response = await axios.post("https://api-eventdr.onrender.com/user",
+      const response = await axios.post("https://api-eventdr.onrender.com/ventas",
         {
           id_venta,
           contenido,
